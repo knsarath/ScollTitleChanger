@@ -2,6 +2,7 @@ package com.test.scolltitle;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,6 +16,8 @@ public class OnScrollTitleChanger extends RecyclerView.OnScrollListener {
     private String mToolbarTitle;
     private String mListTitle;
     private String mListSubTitle;
+    private boolean initialPositionSet = false;
+    private float initialY;
 
 
     private OnScrollTitleChanger(TextView toolbarTitleTextView, TextView listTitleTextView, TextView listSubTitleTextView, String toolbarTitle, String listTitle, String listSubTitle) {
@@ -38,30 +41,32 @@ public class OnScrollTitleChanger extends RecyclerView.OnScrollListener {
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         final LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
         if (layoutManager.findFirstVisibleItemPosition() == 0) { // assume that recycler views 0th item is your header
+            if (!initialPositionSet) {
+                initialY = mToolbarTitleTextView.getY();
+                initialPositionSet = true;
+            }
             final View titleView = layoutManager.findViewByPosition(0);
             final float endY = recyclerView.getY() - titleView.getHeight();
             final float percentage = Math.abs(titleView.getY()) / Math.abs(endY);
-            // final float actualY = endY + titleView.getHeight();
-            // Log.d(TAG, "Actual Y :" + actualY + " , End y :" + endY + "currentY =" + titleView.getY() + " percentage = " + (percentage));
 
             mToolbarTitleTextView.setText(mToolbarTitle);
             mToolbarTitleTextView.setAlpha(1 - percentage);
-
-            if (percentage > 0.5) {
+            mToolbarTitleTextView.animate().y(initialY - Math.abs(titleView.getY())).setDuration(0).start();
+            final boolean alphaStartingPercentage = percentage > 0.5; //  start alpha animation of the toolbar after crossing the header by this percentage
+            if (alphaStartingPercentage) {
+                float alpha =  (float) (((percentage - 0.5) ) / 0.5);
+                Log.d(TAG, "Alpha =" + alpha);
                 mListTitleTextView.setText(mListTitle);
                 mListSubTitleTextView.setText(mListSubTitle);
-                mListSubTitleTextView.setAlpha(percentage);
-                mListTitleTextView.setAlpha(percentage);
+                mListSubTitleTextView.setAlpha(alpha);
+                mListTitleTextView.setAlpha(alpha);
             } else {
                 mListSubTitleTextView.setAlpha(0);
                 mListTitleTextView.setAlpha(0);
             }
-
         } else {
             mToolbarTitleTextView.setAlpha(0);
         }
-
-
     }
 
 
