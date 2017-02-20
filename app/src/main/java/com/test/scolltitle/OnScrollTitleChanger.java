@@ -63,9 +63,19 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
         mToolbarTitleTextView.setAlpha(1 - percentage);
         mListTitleTextView.setAlpha(percentage);
         mListSubTitleTextView.setAlpha(percentage);
+        final int halfHeightOfToolbar = mToolbar.getHeight() / 2;
         if (mHeaderTop < toolbarBottom) { // set subtitles and
-            final float diff = (Math.abs(toolbarBottom - mHeaderTop));
-            mToolbarTitleTextView.animate().y(initialToolbarY - diff).setDuration(0).start();
+            final float gapBtwnHeaderAndToolbar = (Math.abs(toolbarBottom - mHeaderTop));
+            mToolbarTitleTextView.animate().y(initialToolbarY - gapBtwnHeaderAndToolbar).setDuration(0).start();
+            final float headerTextViewsY = mToolbarTitleTextView.getY() + halfHeightOfToolbar;
+            final float subHeaderTextViewsY = mToolbarTitleTextView.getY() + mListTitleTextView.getHeight() + halfHeightOfToolbar;
+            if (headerTextViewsY >= initialTitleY && mToolbarTitleTextView.getY() >= (initialTitleY - halfHeightOfToolbar)) {
+                mListTitleTextView.animate().y(headerTextViewsY).setDuration(0).start();
+                mListSubTitleTextView.animate().y(subHeaderTextViewsY).setDuration(0).start();
+            } else {
+                mListTitleTextView.animate().y(initialTitleY).setDuration(0).start();
+                mListSubTitleTextView.animate().y(initialSubTitleY).setDuration(0).start();
+            }
         } else {
             mToolbarTitleTextView.animate().y(initialToolbarY).setDuration(0).start();
         }
