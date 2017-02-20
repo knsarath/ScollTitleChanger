@@ -17,13 +17,13 @@ import java.util.ArrayList;
  * Created by sarath on 16/2/17.
  */
 
-public class MyFragment extends Fragment {
-    private static final String TAG = MyFragment.class.getSimpleName();
+public class RecyclerViewFragment extends Fragment {
+    private static final String TAG = RecyclerViewFragment.class.getSimpleName();
     private RecyclerView mRecyclerView;
 
 
     public static Fragment createInstance() {
-        return new MyFragment();
+        return new RecyclerViewFragment();
     }
 
     @Nullable
