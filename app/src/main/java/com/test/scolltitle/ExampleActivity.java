@@ -30,7 +30,7 @@ public class ExampleActivity extends AppCompatActivity {
                 fragment = RecyclerViewFragment.createInstance();
                 break;
             case "list_view":
-
+                fragment = ListViewFragment.createInstance();
                 break;
             case "nested_scroll_view":
                 fragment = RecyclerViewFragment.createInstance();

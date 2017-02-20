@@ -3,32 +3,24 @@ package com.test.scolltitle;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
- * Created by sarath on 16/2/17.
+ * Created by sarath on 20/2/17.
  */
 
-public class RecyclerViewFragment extends Fragment {
-    private static final String TAG = RecyclerViewFragment.class.getSimpleName();
-    private RecyclerView mRecyclerView;
-
-
-    public static Fragment createInstance() {
-        return new RecyclerViewFragment();
-    }
-
+public class ListViewFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment, container, false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        final View rootView = inflater.inflate(R.layout.list_view_fragment, container, false);
+
 
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         TextView toolbarTitleTextView = (TextView) toolbar.findViewById(R.id.toolbar_title);
@@ -36,10 +28,10 @@ public class RecyclerViewFragment extends Fragment {
         TextView listSubTitleTextView = (TextView) toolbar.findViewById(R.id.subtitle);
 
 
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
-        final MyAdapter adapter = new MyAdapter(this.getContext(), R.layout.header, HeaderFooterAdapter.NO_FOOTER, DummyData.getList());
-        mRecyclerView.setAdapter(adapter);
+        ListView listView = (ListView) rootView.findViewById(R.id.list);
+        listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, DummyData.getList()));
+        final View headerView = LayoutInflater.from(getContext()).inflate(R.layout.header, null);
+        listView.addHeaderView(headerView);
 
         OnScrollTitleChanger onScrollTitleChanger = new OnScrollTitleChanger.Builder()
                 .setToolbarTitleTextView(toolbarTitleTextView)
@@ -48,14 +40,16 @@ public class RecyclerViewFragment extends Fragment {
                 .setToolbarTitle("Engagement Details")
                 .setListTitle("Dragan Grubestic")
                 .setListSubTitle("User Interface designer")
-                .setHeaderView(adapter.getHeaderView())
+                .setHeaderView(headerView)
                 .setToolbar(toolbar)
                 .create();
 
-        adapter.getHeaderView().getViewTreeObserver().addOnScrollChangedListener(onScrollTitleChanger);
+        headerView.getViewTreeObserver().addOnScrollChangedListener(onScrollTitleChanger);
 
         return rootView;
     }
 
-
+    public static Fragment createInstance() {
+        return new ListViewFragment();
+    }
 }
