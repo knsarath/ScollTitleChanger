@@ -72,7 +72,6 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
     }
 
 
-
     private void initValuesForTheFirstTime() {
         if (!initialPositionSet) {
             initialToolbarY = mToolbarTitleTextView.getY();
@@ -143,7 +142,37 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
         }
 
         public OnScrollTitleChanger create() {
-            return new OnScrollTitleChanger(mToolbar, mHeaderView, mToolbarTitleTextView, mListTitleTextView, mListSubTitleTextView, mToolbarTitle, mListTitle, mListSubTitle);
+            if (mToolbar == null) {
+                throwError("Toolbar");
+                return null;
+            } else if (mHeaderView == null) {
+                throwError("Header view");
+                return null;
+            } else if (mToolbarTitleTextView == null) {
+                throwError("Toolbar title textview");
+                return null;
+            } else if (mListTitleTextView == null) {
+                throwError("List title textview");
+                return null;
+            } else if (mListSubTitleTextView == null) {
+                throwError("List subtitle textview");
+                return null;
+            } else if (mToolbarTitle == null) {
+                throwError("Toolbar title text");
+                return null;
+            } else if (mListTitle == null) {
+                throwError("List title text");
+                return null;
+            } else if (mListSubTitle == null) {
+                throwError("List sub title");
+                return null;
+            } else {
+                return new OnScrollTitleChanger(mToolbar, mHeaderView, mToolbarTitleTextView, mListTitleTextView, mListSubTitleTextView, mToolbarTitle, mListTitle, mListSubTitle);
+            }
+        }
+
+        private static void throwError(String emptyComponent) {
+            throw new RuntimeException(emptyComponent + " can not be null. Please set a valid " + emptyComponent);
         }
 
     }
