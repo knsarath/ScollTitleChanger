@@ -1,15 +1,17 @@
 package com.test.scolltitle;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 /**
  * Created by sarath on 17/2/17.
  */
-public class OnScrollTitleChanger extends RecyclerView.OnScrollListener {
+public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedListener {
+
+    private View mToolbar;
+    private View mHeaderView;
     private TextView mToolbarTitleTextView;
     private TextView mListSubTitleTextView;
     private TextView mListTitleTextView;
@@ -17,55 +19,70 @@ public class OnScrollTitleChanger extends RecyclerView.OnScrollListener {
     private String mListTitle;
     private String mListSubTitle;
     private boolean initialPositionSet = false;
-    private float initialY;
+    private float initialToolbarY;
+    private float initialTitleY;
+    private float initialSubTitleY;
+
+    private int[] toolbarXY = new int[2];
+    private int[] headerXY = new int[2];
+
+    private float mToolbarTop;
+    private float mHeaderTop;
+    private int Y_COORDINATE = 1;
 
 
-    private OnScrollTitleChanger(TextView toolbarTitleTextView, TextView listTitleTextView, TextView listSubTitleTextView, String toolbarTitle, String listTitle, String listSubTitle) {
+    private OnScrollTitleChanger(View toolbar, View headerView, TextView toolbarTitleTextView, TextView listTitleTextView, TextView listSubTitleTextView, String toolbarTitle, String listTitle, String listSubTitle) {
         mToolbarTitleTextView = toolbarTitleTextView;
         mListSubTitleTextView = listSubTitleTextView;
         mListTitleTextView = listTitleTextView;
         mToolbarTitle = toolbarTitle;
         mListTitle = listTitle;
         mListSubTitle = listSubTitle;
+        mToolbar = toolbar;
+        mHeaderView = headerView;
     }
 
     private static final String TAG = OnScrollTitleChanger.class.getSimpleName();
 
 
+    /**
+     * VTO callback
+     */
     @Override
-    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
+    public void onScrollChanged() {
+
+        initValuesForTheFirstTime();
+
+        mToolbar.getLocationOnScreen(toolbarXY);
+        mHeaderView.getLocationOnScreen(headerXY);
+        mToolbarTop = toolbarXY[Y_COORDINATE];
+        mHeaderTop = headerXY[Y_COORDINATE];
+        final float toolbarBottom = mToolbarTop + mToolbar.getHeight();
+        final float endY = toolbarBottom - mHeaderView.getHeight();
+        final float percentage = Math.abs(mHeaderView.getY()) / Math.abs(endY);
+        mToolbarTitleTextView.setAlpha(1 - percentage);
+        mListTitleTextView.setAlpha(percentage);
+        mListSubTitleTextView.setAlpha(percentage);
+        if (mHeaderTop < toolbarBottom) { // set subtitles and
+            final float diff = (Math.abs(toolbarBottom - mHeaderTop));
+            mToolbarTitleTextView.animate().y(initialToolbarY - diff).setDuration(0).start();
+        } else {
+            mToolbarTitleTextView.animate().y(initialToolbarY).setDuration(0).start();
+        }
     }
 
-    @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-        final LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-        if (layoutManager.findFirstVisibleItemPosition() == 0) { // assume that recycler views 0th item is your header
-            if (!initialPositionSet) {
-                initialY = mToolbarTitleTextView.getY();
-                initialPositionSet = true;
-            }
-            final View titleView = layoutManager.findViewByPosition(0);
-            final float endY = recyclerView.getY() - titleView.getHeight();
-            final float percentage = Math.abs(titleView.getY()) / Math.abs(endY);
 
+
+    private void initValuesForTheFirstTime() {
+        if (!initialPositionSet) {
+            initialToolbarY = mToolbarTitleTextView.getY();
+            initialTitleY = mListTitleTextView.getY();
+            initialSubTitleY = mListSubTitleTextView.getY();
+            Log.d(TAG, "Original title pos =" + initialToolbarY);
             mToolbarTitleTextView.setText(mToolbarTitle);
-            mToolbarTitleTextView.setAlpha(1 - percentage);
-            mToolbarTitleTextView.animate().y(initialY - Math.abs(titleView.getY())).setDuration(0).start();
-            final boolean alphaStartingPercentage = percentage > 0.5; //  start alpha animation of the toolbar after crossing the header by this percentage
-            if (alphaStartingPercentage) {
-                float alpha =  (float) (((percentage - 0.5) ) / 0.5);
-                Log.d(TAG, "Alpha =" + alpha);
-                mListTitleTextView.setText(mListTitle);
-                mListSubTitleTextView.setText(mListSubTitle);
-                mListSubTitleTextView.setAlpha(alpha);
-                mListTitleTextView.setAlpha(alpha);
-            } else {
-                mListSubTitleTextView.setAlpha(0);
-                mListTitleTextView.setAlpha(0);
-            }
-        } else {
-            mToolbarTitleTextView.setAlpha(0);
+            mListTitleTextView.setText(mListTitle);
+            mListSubTitleTextView.setText(mListSubTitle);
+            initialPositionSet = true;
         }
     }
 
@@ -81,6 +98,8 @@ public class OnScrollTitleChanger extends RecyclerView.OnScrollListener {
         private String mToolbarTitle;
         private String mListTitle;
         private String mListSubTitle;
+        private View mToolbar;
+        private View mHeaderView;
 
 
         public Builder setToolbarTitleTextView(TextView toolbarTitleTextView) {
@@ -113,8 +132,19 @@ public class OnScrollTitleChanger extends RecyclerView.OnScrollListener {
             return this;
         }
 
-        public OnScrollTitleChanger create() {
-            return new OnScrollTitleChanger(mToolbarTitleTextView, mListTitleTextView, mListSubTitleTextView, mToolbarTitle, mListTitle, mListSubTitle);
+        public Builder setToolbar(View toolbar) {
+            mToolbar = toolbar;
+            return this;
         }
+
+        public Builder setHeaderView(View headerView) {
+            mHeaderView = headerView;
+            return this;
+        }
+
+        public OnScrollTitleChanger create() {
+            return new OnScrollTitleChanger(mToolbar, mHeaderView, mToolbarTitleTextView, mListTitleTextView, mListSubTitleTextView, mToolbarTitle, mListTitle, mListSubTitle);
+        }
+
     }
 }

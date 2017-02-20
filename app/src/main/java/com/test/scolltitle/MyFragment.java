@@ -43,7 +43,6 @@ public class MyFragment extends Fragment {
         final MyAdapter adapter = new MyAdapter(this.getContext(), R.layout.header, HeaderFooterAdapter.NO_FOOTER, getList());
         mRecyclerView.setAdapter(adapter);
 
-
         OnScrollTitleChanger onScrollTitleChanger = new OnScrollTitleChanger.Builder()
                 .setToolbarTitleTextView(toolbarTitleTextView)
                 .setListTitleTextView(listTitleTextView)
@@ -51,9 +50,11 @@ public class MyFragment extends Fragment {
                 .setToolbarTitle("Engagement Details")
                 .setListTitle("Dragan Grubestic")
                 .setListSubTitle("User Interface designer")
+                .setHeaderView(adapter.getHeaderView())
+                .setToolbar(toolbar)
                 .create();
 
-        mRecyclerView.addOnScrollListener(onScrollTitleChanger);  // this will handle header changing
+        adapter.getHeaderView().getViewTreeObserver().addOnScrollChangedListener(onScrollTitleChanger);
 
         return rootView;
     }
