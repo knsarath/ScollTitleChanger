@@ -60,9 +60,11 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
         final float toolbarBottom = mToolbarTop + mToolbar.getHeight();
         final float endY = toolbarBottom - mHeaderView.getHeight();
         final float percentage = Math.abs(mHeaderView.getY()) / Math.abs(endY);
+
         mToolbarTitleTextView.setAlpha(1 - percentage);
         mListTitleTextView.setAlpha(percentage);
         mListSubTitleTextView.setAlpha(percentage);
+
         final int halfHeightOfToolbar = mToolbar.getHeight() / 2;
         if (mHeaderTop < toolbarBottom) { // set subtitles and
             final float gapBtwnHeaderAndToolbar = (Math.abs(toolbarBottom - mHeaderTop));
