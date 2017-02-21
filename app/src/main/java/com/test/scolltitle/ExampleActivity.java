@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import com.test.scolltitle.fragments.ListViewFragment;
 import com.test.scolltitle.fragments.NestedScrollViewFragment;
 import com.test.scolltitle.fragments.RecyclerViewFragment;
+import com.test.scolltitle.fragments.ScrollViewFragment;
 
 public class ExampleActivity extends AppCompatActivity {
 
@@ -40,7 +41,7 @@ public class ExampleActivity extends AppCompatActivity {
                 fragment = NestedScrollViewFragment.createInstance();
                 break;
             case "scroll_view":
-                fragment = RecyclerViewFragment.createInstance();
+                fragment = ScrollViewFragment.createInstance();
                 break;
         }
         return fragment;
