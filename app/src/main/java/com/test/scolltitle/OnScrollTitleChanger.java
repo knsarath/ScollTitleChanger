@@ -29,6 +29,7 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
     private float mToolbarTop;
     private float mHeaderTop;
     private int Y_COORDINATE = 1;
+    private boolean isIdle;
 
 
     private OnScrollTitleChanger(View toolbar, View headerView, TextView toolbarTitleTextView, TextView listTitleTextView, TextView listSubTitleTextView, String toolbarTitle, String listTitle, String listSubTitle) {
@@ -51,6 +52,9 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
 
         initValuesForTheFirstTime();
 
+        /**
+         * Finding the coordinates of toolbar and header view (Based of screen not based on its parent)
+         */
         mToolbar.getLocationOnScreen(toolbarXY);
         mHeaderView.getLocationOnScreen(headerXY);
         mToolbarTop = toolbarXY[Y_COORDINATE];
@@ -83,6 +87,8 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
                 mListSubTitleTextView.animate().y(initialSubTitleY).setDuration(0).start();
             }
 
+            isIdle = false; // idle flag is set to false to denote some animation is going on
+
         } else {// header is below somewhere in the screen , it has not touched the toolbar , so show toolbar text only , no need to show list title and subtitle in toolbar
             reset();
         }
@@ -101,12 +107,16 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
     }
 
     private void reset() {
-        mToolbarTitleTextView.setText(mToolbarTitle);
-        mListTitleTextView.setText(mListTitle);
-        mListSubTitleTextView.setText(mListSubTitle);
-        mToolbarTitleTextView.animate().y(initialToolbarY).alpha(1).setDuration(0).start();
-        mListTitleTextView.animate().y(initialTitleY).alpha(0).setDuration(0).start();
-        mListSubTitleTextView.animate().y(initialSubTitleY).alpha(0).setDuration(0).start();
+        if (!isIdle) {  // this flag is just to avoid unnecessary execution of this reset function again and again when the header is away from toolbar. 
+            Log.d(TAG, "Resetting");
+            mToolbarTitleTextView.setText(mToolbarTitle);
+            mListTitleTextView.setText(mListTitle);
+            mListSubTitleTextView.setText(mListSubTitle);
+            mToolbarTitleTextView.animate().y(initialToolbarY).alpha(1).setDuration(0).start();
+            mListTitleTextView.animate().y(initialTitleY).alpha(0).setDuration(0).start();
+            mListSubTitleTextView.animate().y(initialSubTitleY).alpha(0).setDuration(0).start();
+            isIdle = true;
+        }
     }
 
 
