@@ -97,6 +97,9 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
 
     private void initValuesForTheFirstTime() {
         if (!initialPositionSet) {
+            /**
+             * saving the actual positions of toolbar and title subtitle texts
+             */
             initialToolbarY = mToolbarTitleTextView.getY();
             initialTitleY = mListTitleTextView.getY();
             initialSubTitleY = mListSubTitleTextView.getY();
