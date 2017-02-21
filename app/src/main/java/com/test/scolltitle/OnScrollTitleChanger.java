@@ -45,7 +45,7 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
 
 
     /**
-     * VTO callback
+     * ViewTreeObserver callback
      */
     @Override
     public void onScrollChanged() {
