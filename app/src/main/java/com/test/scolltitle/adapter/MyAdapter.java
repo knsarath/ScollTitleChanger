@@ -1,4 +1,4 @@
-package com.test.scolltitle;
+package com.test.scolltitle.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

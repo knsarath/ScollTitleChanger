@@ -107,7 +107,7 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
     }
 
     private void reset() {
-        if (!isIdle) {  // this flag is just to avoid unnecessary execution of this reset function again and again when the header is away from toolbar. 
+        if (!isIdle) {  // this flag is just to avoid unnecessary execution of this reset function again and again when the header is away from toolbar.
             Log.d(TAG, "Resetting");
             mToolbarTitleTextView.setText(mToolbarTitle);
             mListTitleTextView.setText(mListTitle);

@@ -1,4 +1,4 @@
-package com.test.scolltitle;
+package com.test.scolltitle.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.test.scolltitle.DummyData;
+import com.test.scolltitle.OnScrollTitleChanger;
+import com.test.scolltitle.R;
 
 /**
  * Created by sarath on 20/2/17.

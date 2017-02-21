@@ -6,6 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import com.test.scolltitle.fragments.ListViewFragment;
+import com.test.scolltitle.fragments.NestedScrollViewFragment;
+import com.test.scolltitle.fragments.RecyclerViewFragment;
+
 public class ExampleActivity extends AppCompatActivity {
 
     @Override
