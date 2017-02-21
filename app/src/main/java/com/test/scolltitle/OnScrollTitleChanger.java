@@ -9,7 +9,7 @@ import android.widget.TextView;
  * Created by sarath on 17/2/17.
  */
 public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedListener {
-
+    private static final String TAG = OnScrollTitleChanger.class.getSimpleName();
     private View mToolbar;
     private View mHeaderView;
     private TextView mToolbarTitleTextView;
@@ -42,8 +42,6 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
         mHeaderView = headerView;
     }
 
-    private static final String TAG = OnScrollTitleChanger.class.getSimpleName();
-
 
     /**
      * VTO callback
@@ -58,28 +56,35 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
         mToolbarTop = toolbarXY[Y_COORDINATE];
         mHeaderTop = headerXY[Y_COORDINATE];
         final float toolbarBottom = mToolbarTop + mToolbar.getHeight();
-        final float endY = toolbarBottom - mHeaderView.getHeight();
-        final float percentage = Math.abs(mHeaderView.getY()) / Math.abs(endY);
 
-        mToolbarTitleTextView.setAlpha(1 - percentage);
-        mListTitleTextView.setAlpha(percentage);
-        mListSubTitleTextView.setAlpha(percentage);
+        // Do all these animations only if atleast the below header has touched the bottom of toolbar or crossed the toolbar
+        if (mHeaderTop <= toolbarBottom) {
+            /**
+             * Find the percentage of distance moved and set transparency to that percentage
+             */
+            final float endY = toolbarBottom - mHeaderView.getHeight();
+            final float percentage = Math.abs(mHeaderTop - toolbarBottom) / Math.abs(endY);
+            mToolbarTitleTextView.setAlpha(1 - percentage);
+            mListTitleTextView.setAlpha(percentage);
+            mListSubTitleTextView.setAlpha(percentage);
 
-        final int halfHeightOfToolbar = mToolbar.getHeight() / 2;
-        if (mHeaderTop < toolbarBottom) { // set subtitles and
+            final int gap = mToolbar.getHeight() / 2; // setting a gap between the toolbar title and list title.  while scrolling this gap has to be kept. Eg: If toolbar title has moved up/down by some pixel ,
+            // then the subtitle should be the there below this gap always
+
             final float gapBtwnHeaderAndToolbar = (Math.abs(toolbarBottom - mHeaderTop));
             mToolbarTitleTextView.animate().y(initialToolbarY - gapBtwnHeaderAndToolbar).setDuration(0).start();
-            final float headerTextViewsY = mToolbarTitleTextView.getY() + halfHeightOfToolbar;
-            final float subHeaderTextViewsY = mToolbarTitleTextView.getY() + mListTitleTextView.getHeight() + halfHeightOfToolbar;
-            if (headerTextViewsY >= initialTitleY && mToolbarTitleTextView.getY() >= (initialTitleY - halfHeightOfToolbar)) {
+            final float headerTextViewsY = mToolbarTitleTextView.getY() + gap;
+            final float subHeaderTextViewsY = mToolbarTitleTextView.getY() + mListTitleTextView.getHeight() + gap;
+            if (headerTextViewsY >= initialTitleY && mToolbarTitleTextView.getY() >= (initialTitleY - gap)) {
                 mListTitleTextView.animate().y(headerTextViewsY).setDuration(0).start();
                 mListSubTitleTextView.animate().y(subHeaderTextViewsY).setDuration(0).start();
             } else {
                 mListTitleTextView.animate().y(initialTitleY).setDuration(0).start();
                 mListSubTitleTextView.animate().y(initialSubTitleY).setDuration(0).start();
             }
-        } else {
-            mToolbarTitleTextView.animate().y(initialToolbarY).setDuration(0).start();
+
+        } else {// header is below somewhere in the screen , it has not touched the toolbar , so show toolbar text only , no need to show list title and subtitle in toolbar
+            reset();
         }
     }
 
@@ -90,11 +95,18 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
             initialTitleY = mListTitleTextView.getY();
             initialSubTitleY = mListSubTitleTextView.getY();
             Log.d(TAG, "Original title pos =" + initialToolbarY);
-            mToolbarTitleTextView.setText(mToolbarTitle);
-            mListTitleTextView.setText(mListTitle);
-            mListSubTitleTextView.setText(mListSubTitle);
+            reset();
             initialPositionSet = true;
         }
+    }
+
+    private void reset() {
+        mToolbarTitleTextView.setText(mToolbarTitle);
+        mListTitleTextView.setText(mListTitle);
+        mListSubTitleTextView.setText(mListSubTitle);
+        mToolbarTitleTextView.animate().y(initialToolbarY).alpha(1).setDuration(0).start();
+        mListTitleTextView.animate().y(initialTitleY).alpha(0).setDuration(0).start();
+        mListSubTitleTextView.animate().y(initialSubTitleY).alpha(0).setDuration(0).start();
     }
 
 
