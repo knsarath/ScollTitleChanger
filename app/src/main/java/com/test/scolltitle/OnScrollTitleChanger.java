@@ -61,7 +61,7 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
         mHeaderTop = headerXY[Y_COORDINATE];
         final float toolbarBottom = mToolbarTop + mToolbar.getHeight();
 
-        // Do all these animations only if atleast the below header has touched the bottom of toolbar or crossed the toolbar
+        // Do all these animations only if at least the below header has touched the bottom of toolbar or crossed the toolbar
         if (mHeaderTop <= toolbarBottom) {
             /**
              * Find the percentage of distance moved and set transparency to that percentage
