@@ -28,7 +28,7 @@ public class OnScrollTitleChanger implements ViewTreeObserver.OnScrollChangedLis
 
     private float mToolbarTop;
     private float mHeaderTop;
-    private int Y_COORDINATE = 1;
+    private final static int  Y_COORDINATE = 1;
     private boolean isIdle;
 
 
